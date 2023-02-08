@@ -114,6 +114,22 @@ app.patch('/user/:id',async (req,res) => {
     }
 })
 
+
+app.delete("/user/:id",async (req,res) => {
+    console.log(req.params.id)
+    try {
+     const user = await User.findByIdAndDelete(req.params.id);    
+     if(!user) {
+        return res.status(404).send("Not found ");
+     }
+     res.send(user);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+   
+
+})
+
 app.get('/tasks',async (req,res) => {
     try {
         let data = await Task.find({});
@@ -159,19 +175,19 @@ app.patch('/task/:id',async (req,res) => {
    const allowedUpdates = ['description','completed'];
    const isValidOperation = update.every((update) => allowedUpdates.includes(update));
    if(!isValidOperation) {
-    res.send({error : "invalid updates"});
+     return res.status(400).send({error : "invalid updates"});
    }
    
    try {
     let task = await Task.findByIdAndUpdate(req.params.id,req.body,{new : true,runValidators : true })
-    console.log(task);
+    //console.log(task);
     if(!task) {
 
         return res.send({error : "recored not found"})
     }
     res.send(task);
 } catch (error) {
-    res.status(400).send(error)
+     return res.status(400).send(error)
    }
    // res.send(task);
 })
