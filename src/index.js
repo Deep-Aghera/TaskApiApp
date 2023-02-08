@@ -153,6 +153,29 @@ app.get('/task/:id',async (req,res) => {
     //res.send("got id");
 })
 
+app.patch('/task/:id',async (req,res) => {
+   
+   const update = Object.keys(req.body);
+   const allowedUpdates = ['description','completed'];
+   const isValidOperation = update.every((update) => allowedUpdates.includes(update));
+   if(!isValidOperation) {
+    res.send({error : "invalid updates"});
+   }
+   
+   try {
+    let task = await Task.findByIdAndUpdate(req.params.id,req.body,{new : true,runValidators : true })
+    console.log(task);
+    if(!task) {
+
+        return res.send({error : "recored not found"})
+    }
+    res.send(task);
+} catch (error) {
+    res.status(400).send(error)
+   }
+   // res.send(task);
+})
+
 app.listen(3000,() => {
     console.log(`server started at ${port}`)
 })
