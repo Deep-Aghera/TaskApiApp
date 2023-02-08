@@ -4,9 +4,6 @@ require('./db/moongoose')
 
 const port = process.env.PORT || 3000;
 
-//  >>>>>>>>>>>>>>   models   <<<<<<<<<<<<<<<
-const Task = require('./models/Task');
-
 
 // >>>>>>>>>>>>>>>>   router <<<<<<<<<<<<<<<<<<<
 const userRouter = require('./router/user');
@@ -18,7 +15,6 @@ app.use(express.json())
 app.use(userRouter);
 app.use(taskRouter)
 
-//app.use(router)
 
 
 
