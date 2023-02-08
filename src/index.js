@@ -192,6 +192,24 @@ app.patch('/task/:id',async (req,res) => {
    // res.send(task);
 })
 
+
+
+app.delete("/task/:id",async (req,res) => {
+    //res.send(req.params.id);
+    try {
+        let task = await Task.findByIdAndDelete(req.params.id);
+       // console.log(task)
+        if(!task) {
+            return res.status(402).send();
+        }
+       res.send(task)
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+
+})
+
+
 app.listen(3000,() => {
     console.log(`server started at ${port}`)
 })
