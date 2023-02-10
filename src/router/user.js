@@ -1,14 +1,11 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const router = new express.Router();
 
 
 //  >>>>>>>>>>>>>>   models   <<<<<<<<<<<<<<<
 const User = require('../models/User');
 
-
-router.get('/test',(req,res) => {
-    res.send('form a new file')
-})
 
 
 router.post('/user',async (req,res) => {
@@ -102,6 +99,19 @@ router.patch('/user/:id',async (req,res) => {
     }
 })
 
+router.post('/user/login',async (req,res) => {
+    try {
+        // const user = await User.findOne({email : req.body.email});
+        // console.log("this is user =>",user,user.password,req.body.password);
+        // const isMatch = await bcrypt.compare(req.body.password,user.password)
+        // console.log("is mathah ",isMatch);
+        const user = await User.findByCredentials(req.body.email,req.body.password);
+        res.send(user)
+    } catch (error) {
+        console.log("loging ==>>>>",error)
+        res.send({error})
+    }
+})
 
 router.delete("/user/:id",async (req,res) => {
     console.log(req.params.id)
