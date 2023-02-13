@@ -106,7 +106,8 @@ router.post('/user/login',async (req,res) => {
         // const isMatch = await bcrypt.compare(req.body.password,user.password)
         // console.log("is mathah ",isMatch);
         const user = await User.findByCredentials(req.body.email,req.body.password);
-        res.send(user)
+        const token = await user.generateAuthToken()
+        res.send({user,token})
     } catch (error) {
         console.log("loging ==>>>>",error)
         res.send({error})
