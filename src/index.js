@@ -11,7 +11,10 @@ const taskRouter = require('./router/task');
 
 //console.log(User)
 app.use(express.json())
-
+// app.use((req,res,next) => {
+//     console.log(req.method,req.url);
+//    res.status(505).send("currently services not available");
+// })
 app.use(userRouter);
 app.use(taskRouter)
 
@@ -24,6 +27,7 @@ app.listen(3000,() => {
 })
 
 const jwt = require('jsonwebtoken');
+const { rawListeners } = require('./models/User');
 
 const myFunction = async () => {
     const token = jwt.sign({_id : 'abc123'},'thisismynewcourse',{expiresIn : "7 days"});

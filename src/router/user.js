@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const auth = require('../middleware/auth')
 const router = new express.Router();
-
 
 //  >>>>>>>>>>>>>>   models   <<<<<<<<<<<<<<<
 const User = require('../models/User');
@@ -31,7 +31,7 @@ router.post('/user',async (req,res) => {
 })
 
 
-router.get('/users',async (req,res) => {
+router.get('/users', async (req,res) => {
     try {
         let data = await User.find({});
         res.status(200).send(data);
@@ -47,7 +47,7 @@ router.get('/users',async (req,res) => {
     //res.send("gotchaa")
 })
 
-router.get('/users/:id',async (req,res) => {
+router.get('/users/:id',auth,async (req,res) => {
    // console.log(req.params);
     const _id = req.params.id;
 
