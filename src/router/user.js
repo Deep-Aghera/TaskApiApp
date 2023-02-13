@@ -7,13 +7,14 @@ const router = new express.Router();
 const User = require('../models/User');
 
 
-
+//  >>>>>>>>>>>>>>   creating user    <<<<<<<<<<<<<<<
 router.post('/user',async (req,res) => {
     //console.log(req.body);
     const user = new User(req.body);
     try {
         await user.save();
-        return res.send(user);
+        let token = await user.generateAuthToken();
+        return res.send({user,token});
     } catch (error) {
         res.status(400).send(error)
         
