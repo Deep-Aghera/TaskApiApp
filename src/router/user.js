@@ -29,7 +29,40 @@ router.post('/user',async (req,res) => {
     // })
    // return res.send("thank you")
 })
+//  >>>>>>>>>>>>>>   me    <<<<<<<<<<<<<<<
+router.get('/user/me',auth,async (req,res) => {
+    res.send(req.user);
+    //res.send("me"); 
+})
 
+
+//  >>>>>>>>>>>>>>   logout    <<<<<<<<<<<<<<<
+
+router.post('/user/logout', auth,async (req,res) => {
+    try {
+        
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token == req.token
+        })
+        await req.user.save();
+        res.send();
+    } catch (error) {
+        res.status(500).send()
+    }
+})
+
+//  >>>>>>>>>>>>>>   logout    <<<<<<<<<<<<<<<
+
+router.post('/user/logoutall',auth,async (req,res) => {
+    try {
+        req.user.tokens = [];
+        await req.user.save();
+        res.send()
+    } catch (error) {
+        res.status(500).send()
+    }
+   // res.send("we got your request");
+})
 
 router.get('/users', async (req,res) => {
     try {
