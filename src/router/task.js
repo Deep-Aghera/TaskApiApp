@@ -30,13 +30,24 @@ router.post('/tasks',auth,async (req,res) => {
     //res.send("task is recored")
 })
 
+//      GET /tasks?completed=false
 
-router.get('/tasks',async (req,res) => {
+router.get('/tasks',auth,async (req,res) => {
+
     try {
-        let data = await Task.find({});
-        res.send(data)
+        //let data = await Task.find({owner : req.user._id});
+       // console.log(data)
+       await req.user.populate({
+        path : 'tasks',
+        match : {
+            completed : true
+        }
+       })
+       //console.log("this is not",req.user.tasks)
+       
+       res.send(req.user.tasks)
     } catch (error) {
-        res.send(error);
+        res.status(404).send(error);
     }
     // Task.find({}).then((data) => {
     //     return res.send(data)
@@ -46,19 +57,20 @@ router.get('/tasks',async (req,res) => {
    // res.send('hello')
 })
 
-router.get('/task/:id',async (req,res) => {
-    console.log(req.params);
+router.get('/task/:id',auth,async (req,res) => {
+   // console.log(req.params);
     const _id = req.params.id;
     try {
        // let task = await Task.findById(_id);
        const task = await Task.findOne({_id,owner : req.user._id})
+      
         if(!task){
             return res.status(404).send("User not found")
         }
         res.send(task);
         
     } catch (error) {
-        res.status(404).send(error);
+        res.status(402).send(error);
     }
     // Task.findById(_id).then((data) => {
     //     if(!data){
@@ -71,7 +83,7 @@ router.get('/task/:id',async (req,res) => {
     //res.send("got id");
 })
 
-router.patch('/task/:id',async (req,res) => {
+router.patch('/task/:id',auth,async (req,res) => {
    
    const updates = Object.keys(req.body);
    const allowedUpdates = ['description','completed'];
@@ -82,8 +94,10 @@ router.patch('/task/:id',async (req,res) => {
    
    try {
     //let task = await Task.findByIdAndUpdate(req.params.id,req.body,{new : true,runValidators : true })
-    let task = await Task.findById(req.params.id);
-    if(!task) {
+   // let task = await Task.findById(req.params.id);
+   let task =  await Task.findOne({_id : req.params.id,owner : req.user._id})
+    
+   if(!task) {
 
         return res.send({error : "recored not found"})
     }
@@ -100,11 +114,13 @@ router.patch('/task/:id',async (req,res) => {
 
 
 
-router.delete("/task/:id",async (req,res) => {
+router.delete("/task/:id",auth,async (req,res) => {
     
     try {
-        let task = await Task.findByIdAndDelete(req.params.id);
-       // console.log(task)
+        //let task = await Task.findByIdAndDelete(req.params.id);
+        let task = await Task.findOneAndDelete({_id : req.params.id, owner : req.user._id})
+       
+        // console.log(task)
         if(!task) {
             return res.status(402).send();
         }
