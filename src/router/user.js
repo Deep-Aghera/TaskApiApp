@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const auth = require('../middleware/auth')
+const multer = require('multer');
 const router = new express.Router();
 
 //  >>>>>>>>>>>>>>   models   <<<<<<<<<<<<<<<
@@ -166,5 +167,23 @@ router.delete("/user/me",auth,async (req,res) => {
 
 })
 
+
+const upload = multer({
+    dest : 'avatars',
+    limits :  {
+        fileSize : 1000000
+    },
+   fileFilter(req,file,cb) {
+        if(!file.originalname.endsWith('.pdf')) {
+            return cb(new Error('Please upload a pdf'))
+        }
+        cb(undefined,true)
+    }
+})
+
+router.post('/avatar',upload.single('upload'),(req,res) => {
+    console.log("got called")
+    res.send();
+})
 
 module.exports = router;

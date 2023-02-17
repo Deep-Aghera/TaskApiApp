@@ -31,16 +31,32 @@ router.post('/tasks',auth,async (req,res) => {
 })
 
 //      GET /tasks?completed=false
+//      GET /tasks?limit=10&skip=10
+//      GET /tasks?sortBy=createAt:des
 
 router.get('/tasks',auth,async (req,res) => {
 
     try {
         //let data = await Task.find({owner : req.user._id});
        // console.log(data)
+       const match = {};
+       const sort = {};
+
+       if(req.query.completed) {
+        match.completed = req.query.completed === 'true'
+       }
+       if(req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+       }
+       console.log(req.query.limit);
        await req.user.populate({
         path : 'tasks',
-        match : {
-            completed : true
+        match,
+        options : {
+            limit :  parseInt(req.query.limit),
+            skip :   parseInt(req.query.skip),
+            sort
         }
        })
        //console.log("this is not",req.user.tasks)
