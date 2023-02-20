@@ -174,16 +174,20 @@ const upload = multer({
         fileSize : 1000000
     },
    fileFilter(req,file,cb) {
-        if(!file.originalname.endsWith('.pdf')) {
-            return cb(new Error('Please upload a pdf'))
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload a proper image'))
         }
         cb(undefined,true)
     }
 })
 
-router.post('/avatar',upload.single('upload'),(req,res) => {
+router.post('/avatar',auth,upload.single('upload'),(req,res) => {
     console.log("got called")
     res.send();
+},(error,req,res,next) => {
+    if(error) {
+        res.status(400).send({error : error.message})
+    }
 })
 
 module.exports = router;
